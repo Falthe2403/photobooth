@@ -25,6 +25,7 @@ from io import BytesIO
 from .PictureDimensions import PictureDimensions
 from .. import StateMachine
 from ..Threading import Workers
+from ..Config import Config
 
 # Available camera modules as tuples of (config name, module name, class name)
 modules = (
@@ -95,12 +96,37 @@ class Camera:
 
         return True
 
+    # Anzahl der Fotos für die Kamera holen
+    def holedimension(self):
+        
+        config = Config('photobooth.cfg')   # aktuelles Config-File holen
+        self._cfg = config
+        
+        self._cap = self._cam()
+
+        test_picture = self._cap.getPicture()
+        if self._rotation is not None:
+            test_picture = test_picture.transpose(self._rotation)
+
+        self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
+        self._is_preview = self._is_preview and self._cap.hasPreview
+
+        background = self._cfg.get('Picture', 'background')
+        if len(background) > 0:
+            logging.info('Using background "{}"'.format(background))
+            bg_picture = Image.open(background)
+            self._template = bg_picture.resize(self._pic_dims.outputSize)
+        else:
+            self._template = Image.new('RGB', self._pic_dims.outputSize,
+                                       (255, 255, 255))
+
     def handleState(self, state):
 
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self.prepareCapture()
+            self.holedimension()    # siehe Funktion oben
+            self.prepareCapture() 
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()
         elif isinstance(state, StateMachine.CaptureState):
@@ -154,6 +180,7 @@ class Camera:
                             StateMachine.CameraEvent('capture', byte_data))
 
         if state.num_picture < self._pic_dims.totalNumPictures:
+            logging.info(self._pic_dims.totalNumPictures)
             self._comm.send(Workers.MASTER,
                             StateMachine.CameraEvent('countdown'))
         else:

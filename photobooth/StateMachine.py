@@ -27,6 +27,7 @@ class Context:
         super().__init__()
         self._comm = communicator
         self.is_running = False
+        #self._cfg = config 
         if omit_welcome:
             self.state = StartupState()
         else:
@@ -352,11 +353,15 @@ class IdleState(State):
 
     def handleEvent(self, event, context):
 
+        # Gpio Event in abhängigkeit der einzelnen Taster (1, 2 bzw. 4 Bilder)
         if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-           event.name == 'trigger'):
-            context.state = GreeterState()
+           event.name == 'trigger'):context.state = GreeterState()
+        elif ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
+           event.name == 'printp'): context.state = GreeterState()
+        elif ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
+           event.name == 'againpic'): context.state = GreeterState()
         else:
-            raise TypeError('Unknown Event type "{}"'.format(event))
+             raise TypeError('Unknown Event type "{}"'.format(event))
 
 
 class GreeterState(State):
@@ -462,8 +467,12 @@ class PostprocessState(State):
 
     def handleEvent(self, event, context):
 
-        if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-           event.name == 'idle'):
+        #if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
+        #  event.name == 'idle'):
+        
+        # Again Taster um zum Idle Modus zurück zu kehren 
+        if ((isinstance(event, GuiEvent) and event.name == 'idle') or 
+        (isinstance(event, GpioEvent) and event.name == 'againpic')):
             context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))

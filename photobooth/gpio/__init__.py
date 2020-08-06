@@ -33,8 +33,11 @@ class Gpio:
 
         self._comm = comm
         self._gpio = None
-
+        self._cfg = config
+    
         self._is_trigger = False
+        self._is_printp = False     # neu aber keine Ahnung
+        self._is_againpic = False   # neu aber keine Ahnung
         self._is_enabled = config.getBool('Gpio', 'enable')
         self._countdown_time = config.getInt('Photobooth', 'countdown_time')
 
@@ -44,20 +47,26 @@ class Gpio:
 
         if self._is_enabled:
             self._gpio = Entities()
-
+            
+            # GPIO Nummer aus der Config auslesen
             lamp_pin = config.getInt('Gpio', 'lamp_pin')
-            trigger_pin = config.getInt('Gpio', 'trigger_pin')
+            trigger_pin = config.getInt('Gpio', 'trigger_pin')     
+            printp_pin = config.getInt('Gpio', 'printp_pin')        # neu
+            againpic_pin = config.getInt('Gpio', 'againpic_pin')     # neu
             exit_pin = config.getInt('Gpio', 'exit_pin')
 
             rgb_pin = (config.getInt('Gpio', 'chan_r_pin'),
                        config.getInt('Gpio', 'chan_g_pin'),
                        config.getInt('Gpio', 'chan_b_pin'))
 
-            logging.info(('GPIO enabled (lamp_pin=%d, trigger_pin=%d, '
+            logging.info(('GPIO enabled (lamp_pin=%d, trigger_pin=%d,'
+                        'printp_pin=%d,againpic_pin=%d'                  # neu
                          'exit_pin=%d, rgb_pins=(%d, %d, %d))'),
-                         lamp_pin, trigger_pin, exit_pin, *rgb_pin)
+                         lamp_pin, trigger_pin, printp_pin, againpic_pin,exit_pin, *rgb_pin)     # neu
 
             self._gpio.setButton(trigger_pin, self.trigger)
+            self._gpio.setButton(printp_pin, self.printp)        # neu
+            self._gpio.setButton(againpic_pin, self.againpic)    # neu
             self._gpio.setButton(exit_pin, self.exit)
             self._lamp = self._gpio.setLamp(lamp_pin)
             self._rgb = self._gpio.setRgb(rgb_pin)
@@ -106,7 +115,31 @@ class Gpio:
         if self._is_enabled:
             self._is_trigger = False
             self._gpio.lampOff(self._lamp)
+            
+    #----------------------------------neu
+    # Aktivieren / Deaktivieren der Taster
+    def enablePrintp(self):
 
+        if self._is_enabled:
+            self._is_printp = True
+
+    def disablePrintp(self):
+
+        if self._is_enabled:
+            self._is_printp = False
+            
+    def enableAgainpic(self):
+
+        if self._is_enabled:
+            self._is_againpic= True
+
+    def disableAgainpic(self):
+
+        if self._is_enabled:
+            self._is_againpic = False
+            
+    #----------------------------------neu
+    
     def setRgbColor(self, r, g, b):
 
         if self._is_enabled:
@@ -129,13 +162,41 @@ class Gpio:
                                 (0, 0, 0), None)  # self._countdown_time)
             # Note: blinking forever instead of countdown_time to overcome
             # the issue of too slow preview
-
+    # neu --------------------------------------------------------------------------
+    # Zuordnung zwischen Taster und Bilderanzahl + Schreiben in das Photobooth.cfg file
+    def printp(self):
+        
+        self._cfg.set('Picture','num_x','1')
+        self._cfg.set('Picture','num_y','1')
+        self._cfg.write()
+        if self._is_printp:
+            self.disableTrigger()
+            self.disablePrintp()
+            self.disableAgainpic()
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('printp'))
+    
     def trigger(self):
 
+        self._cfg.set('Picture','num_x','1')
+        self._cfg.set('Picture','num_y','2')
+        self._cfg.write()
         if self._is_trigger:
             self.disableTrigger()
+            self.disablePrintp()
+            self.disableAgainpic()
             self._comm.send(Workers.MASTER, StateMachine.GpioEvent('trigger'))
-
+            
+    def againpic(self):
+        
+        self._cfg.set('Picture','num_x','2')
+        self._cfg.set('Picture','num_y','2')
+        self._cfg.write()
+        if self._is_againpic:
+            self.disableTrigger()
+            self.disablePrintp()
+            self.disableAgainpic()
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('againpic'))
+    # neu  --------------------------------------------------------------------------
     def exit(self):
 
         self._comm.send(
@@ -144,7 +205,10 @@ class Gpio:
 
     def showIdle(self):
 
+        sleep(3) # Wartezeit 
         self.enableTrigger()
+        self.enablePrintp()     # Taster aktivieren
+        self.enableAgainpic()   # Taster aktivieren
 
         if self._is_enabled:
             h, s, v = 0, 1, 1
@@ -157,6 +221,8 @@ class Gpio:
     def showGreeter(self):
 
         self.disableTrigger()
+        self.disablePrintp()
+        self.disableAgainpic()
         self.rgbOff()
 
     def showCountdown(self):
@@ -178,7 +244,10 @@ class Gpio:
         self.setRgbColor(0, .15, 0)
 
     def showPostprocess(self):
-
+        
+        self.enableAgainpic()   # Taster aktivieren für "nochmal"
+        self.disablePrintp()
+        
         pass
 
 

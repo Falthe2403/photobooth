@@ -47,7 +47,7 @@ class Welcome(QtWidgets.QFrame):
     def initFrame(self, start_action, set_date_action, settings_action,
                   exit_action):
 
-        btnStart = QtWidgets.QPushButton(_('Start photobooth'))
+        btnStart = QtWidgets.QPushButton(_('Fotoboxstart'))
         btnStart.clicked.connect(start_action)
 
         btnSetDate = QtWidgets.QPushButton(_('Set date/time'))
@@ -65,9 +65,9 @@ class Welcome(QtWidgets.QFrame):
         btnLay.addWidget(btnSettings)
         btnLay.addWidget(btnQuit)
 
-        title = QtWidgets.QLabel(_('photobooth'))
+        title = QtWidgets.QLabel(_('Fotobox von FH & HF'))
 
-        url = 'https://github.com/reuterbal/photobooth'
+        url = ''
         link = QtWidgets.QLabel('<a href="{0}">{0}</a>'.format(url))
 
         lay = QtWidgets.QVBoxLayout()
@@ -84,21 +84,43 @@ class IdleMessage(QtWidgets.QFrame):
         super().__init__()
         self.setObjectName('IdleMessage')
 
-        self._message_label = _('Hit the')
-        self._message_button = _('Button!')
+        self._text_title = _('Wiaviel Bilder wollts')
+        self._printbutton = _('1 Bild')
+        self._againpicbutton = _('4 Bilder')
+        self._triggerbild = _('2 Bilder')
+        
+        #self._message_button = _('Button!')
 
         self.initFrame(trigger_action)
 
     def initFrame(self, trigger_action):
 
-        lbl = QtWidgets.QLabel(self._message_label)
-        btn = QtWidgets.QPushButton(self._message_button)
-        btn.clicked.connect(trigger_action)
+        lbl = QtWidgets.QLabel(self._text_title)
+        lbl.setObjectName('title')
+        lbl2 = QtWidgets.QLabel(self._printbutton)
+        lbl2.setObjectName('links')
+        lbl3 = QtWidgets.QLabel(self._againpicbutton)
+        lbl3.setObjectName('rechts')
+        lbl4 = QtWidgets.QLabel(self._triggerbild)
+        #btn = QtWidgets.QPushButton(self._message_button)
+        #btn.clicked.connect(trigger_action)
 
-        lay = QtWidgets.QVBoxLayout()
+        lay = QtWidgets.QHBoxLayout()
         lay.addWidget(lbl)
-        lay.addWidget(btn)
-        self.setLayout(lay)
+        
+        lay1 = QtWidgets.QHBoxLayout()
+        lay1.addWidget(lbl2)
+        lay1.addWidget(lbl3)
+        
+        lay2 = QtWidgets.QHBoxLayout()
+        lay2.addWidget(lbl4)
+        
+        overlay = QtWidgets.QVBoxLayout()
+        overlay.addLayout(lay)
+        overlay.addLayout(lay1)
+        overlay.addLayout(lay2)
+        #lay.addWidget(btn)
+        self.setLayout(overlay)
 
 
 class GreeterMessage(QtWidgets.QFrame):
@@ -108,8 +130,8 @@ class GreeterMessage(QtWidgets.QFrame):
         super().__init__()
         self.setObjectName('GreeterMessage')
 
-        self._text_title = _('Get ready!')
-        self._text_button = _('Start countdown')
+        self._text_title = _('Schauts das fertig werds')
+        self._text_button = _('Glei geats los')
 
         num_pictures = max(num_x * num_y - len(skip), 1)
         if num_pictures > 1:
@@ -148,7 +170,7 @@ class CaptureMessage(QtWidgets.QFrame):
             self._text = _('Picture {} of {}...').format(num_picture,
                                                          num_pictures)
         else:
-            self._text = 'Taking a photo...'
+            self._text = 'Gsichter erzeugen ...'
 
         self.initFrame()
 
@@ -326,6 +348,10 @@ class PostprocessMessage(Widgets.TransparentOverlay):
         self.setObjectName('PostprocessMessage')
         self.initFrame(tasks, idle_handle, worker)
 
+        #self._printbutton = _('Drucken')
+        #self._againpicbutton = _('Nochmal')
+        #self._triggerbild = _('Gfollt ma')
+
     def initFrame(self, tasks, idle_handle, worker):
 
         def disableAndCall(button, handle):
@@ -337,9 +363,15 @@ class PostprocessMessage(Widgets.TransparentOverlay):
             button = QtWidgets.QPushButton(task.label)
             button.clicked.connect(lambda: disableAndCall(button, task.action))
             return button
-
+        
+        #lbl = QtWidgets.QLabel(self._printbutton)
+        #lbl.setObjectName('links')
+        #lbl2 = QtWidgets.QLabel(self._againpicbutton)
+        #lbl2.setObjectName('rechts')
+        #lbl3 = QtWidgets.QLabel(self._triggerbild)
+        
         buttons = [createButton(task) for task in tasks]
-        buttons.append(QtWidgets.QPushButton(_('Start over')))
+        buttons.append(QtWidgets.QPushButton(_('Gfollt ma')))
         buttons[-1].clicked.connect(idle_handle)
 
         button_lay = QtWidgets.QGridLayout()
@@ -348,7 +380,7 @@ class PostprocessMessage(Widgets.TransparentOverlay):
             button_lay.addWidget(button, *pos)
 
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(QtWidgets.QLabel(_('Happy?')))
+        #layout.addWidget(QtWidgets.QLabel(_('Happy?')))
         layout.addLayout(button_lay)
         self.setLayout(layout)
 
@@ -785,7 +817,19 @@ class Settings(QtWidgets.QFrame):
         trig_pin.setRange(1, 40)
         trig_pin.setValue(self._cfg.getInt('Gpio', 'trigger_pin'))
         self.add('Gpio', 'trigger_pin', trig_pin)
+        
+        #neu ---------------------------------------------------------
+        printp_pin = QtWidgets.QSpinBox()
+        printp_pin.setRange(1, 40)
+        printp_pin.setValue(self._cfg.getInt('Gpio', 'printp_pin'))
+        self.add('Gpio', 'printp_pin', printp_pin)
 
+        againpic_pin = QtWidgets.QSpinBox()
+        againpic_pin.setRange(1, 40)
+        againpic_pin.setValue(self._cfg.getInt('Gpio', 'againpic_pin'))
+        self.add('Gpio', 'againpic_pin', againpic_pin)
+        #neu ---------------------------------------------------------
+        
         lamp_pin = QtWidgets.QSpinBox()
         lamp_pin.setRange(1, 40)
         lamp_pin.setValue(self._cfg.getInt('Gpio', 'lamp_pin'))
@@ -815,6 +859,8 @@ class Settings(QtWidgets.QFrame):
         layout.addRow(_('Enable GPIO:'), enable)
         layout.addRow(_('Exit button pin (BCM numbering):'), exit_pin)
         layout.addRow(_('Trigger button pin (BCM numbering):'), trig_pin)
+        layout.addRow(_('Print button pin (BCM numbering):'), printp_pin)
+        layout.addRow(_('Again button pin (BCM numbering):'), againpic_pin)
         layout.addRow(_('Idle lamp pin (BCM numbering):'), lamp_pin)
         layout.addRow(_('RGB LED pins (BCM numbering):'), lay_rgb)
 
@@ -1028,6 +1074,12 @@ class Settings(QtWidgets.QFrame):
         self._cfg.set('Gpio', 'exit_pin', self.get('Gpio', 'exit_pin').text())
         self._cfg.set('Gpio', 'trigger_pin',
                       self.get('Gpio', 'trigger_pin').text())
+        #neu -------------------------
+        self._cfg.set('Gpio', 'printp_pin',
+                      self.get('Gpio', 'printp_pin').text())
+        self._cfg.set('Gpio', 'againpic_pin',
+                      self.get('Gpio', 'againpic_pin').text())
+        #neu -------------------------              
         self._cfg.set('Gpio', 'lamp_pin', self.get('Gpio', 'lamp_pin').text())
         self._cfg.set('Gpio', 'chan_r_pin',
                       self.get('Gpio', 'chan_r_pin').text())
