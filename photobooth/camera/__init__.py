@@ -100,8 +100,9 @@ class Camera:
     def holedimension(self):
         
         config = Config('photobooth.cfg')   # aktuelles Config-File holen
-        self._cfg = config
-        
+        self._cfg.set('Picture','num_x', config.get('Picture','num_x'))
+        self._cfg.set('Picture','num_y', config.get('Picture','num_y'))
+
         self._cap = self._cam()
 
         test_picture = self._cap.getPicture()
