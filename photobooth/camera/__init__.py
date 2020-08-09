@@ -70,6 +70,7 @@ class Camera:
             test_picture = test_picture.transpose(self._rotation)
 
         self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
+        logging.info(self._pic_dims)
         self._is_preview = self._is_preview and self._cap.hasPreview
 
         background = self._cfg.get('Picture', 'background')
@@ -99,34 +100,16 @@ class Camera:
     # Anzahl der Fotos für die Kamera holen
     def holedimension(self):
         
-        config = Config('photobooth.cfg')   # aktuelles Config-File holen
-        self._cfg.set('Picture','num_x', config.get('Picture','num_x'))
-        self._cfg.set('Picture','num_y', config.get('Picture','num_y'))
-
-        self._cap = self._cam()
-
+        self._cfg.read()
         test_picture = self._cap.getPicture()
-        if self._rotation is not None:
-            test_picture = test_picture.transpose(self._rotation)
-
         self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
-        self._is_preview = self._is_preview and self._cap.hasPreview
-
-        background = self._cfg.get('Picture', 'background')
-        if len(background) > 0:
-            logging.info('Using background "{}"'.format(background))
-            bg_picture = Image.open(background)
-            self._template = bg_picture.resize(self._pic_dims.outputSize)
-        else:
-            self._template = Image.new('RGB', self._pic_dims.outputSize,
-                                       (255, 255, 255))
 
     def handleState(self, state):
 
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self.holedimension()    # siehe Funktion oben
+            self.holedimension()
             self.prepareCapture() 
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()

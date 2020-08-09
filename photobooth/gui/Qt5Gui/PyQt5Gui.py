@@ -176,7 +176,7 @@ class PyQt5Gui(GuiSkeleton):
 
         self._enableEscape()
         self._disableTrigger()
-
+        self._cfg.read()
         num_pic = (self._cfg.getInt('Picture', 'num_x'),
                    self._cfg.getInt('Picture', 'num_y'))
         skip = [i for i in self._cfg.getIntList('Picture', 'skip')
@@ -204,9 +204,11 @@ class PyQt5Gui(GuiSkeleton):
         self._gui.centralWidget().update()
 
     def showCapture(self, state):
-
+        
         num_pic = (self._cfg.getInt('Picture', 'num_x'),
                    self._cfg.getInt('Picture', 'num_y'))
+        logging.info(self._cfg.getInt('Picture', 'num_x'))
+        logging.info(self._cfg.getInt('Picture', 'num_y'))
         skip = [i for i in self._cfg.getIntList('Picture', 'skip')
                 if 1 <= i and i <= num_pic[0] * num_pic[1]]
         self._setWidget(Frames.CaptureMessage(state.num_picture, *num_pic,

@@ -169,6 +169,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','1')
         self._cfg.set('Picture','num_y','1')
         self._cfg.write()
+        logging.info('Schreibe 1 Bild')
         if self._is_printp:
             self.disableTrigger()
             self.disablePrintp()
@@ -180,6 +181,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','1')
         self._cfg.set('Picture','num_y','2')
         self._cfg.write()
+        logging.info('Schreibe 2 Bilder')
         if self._is_trigger:
             self.disableTrigger()
             self.disablePrintp()
@@ -191,6 +193,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','2')
         self._cfg.set('Picture','num_y','2')
         self._cfg.write()
+        logging.info('Schreibe 4 Bilder')
         if self._is_againpic:
             self.disableTrigger()
             self.disablePrintp()
@@ -205,7 +208,7 @@ class Gpio:
 
     def showIdle(self):
 
-        sleep(3) # Wartezeit 
+        # sleep(3) # Wartezeit 
         self.enableTrigger()
         self.enablePrintp()     # Taster aktivieren
         self.enableAgainpic()   # Taster aktivieren

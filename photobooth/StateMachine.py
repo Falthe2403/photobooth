@@ -27,7 +27,6 @@ class Context:
         super().__init__()
         self._comm = communicator
         self.is_running = False
-        #self._cfg = config 
         if omit_welcome:
             self.state = StartupState()
         else:
@@ -346,7 +345,7 @@ class StartupState(State):
 
 
 class IdleState(State):
-
+    
     def __init__(self):
 
         super().__init__()
