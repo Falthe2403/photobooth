@@ -70,7 +70,6 @@ class Camera:
             test_picture = test_picture.transpose(self._rotation)
 
         self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
-        logging.info(self._pic_dims)
         self._is_preview = self._is_preview and self._cap.hasPreview
 
         background = self._cfg.get('Picture', 'background')
@@ -109,7 +108,7 @@ class Camera:
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self.holedimension()
+            self.holedimension() # Kamera übernimmt im Greeter State die gesetzten PictureDimension von dem .cfg-File
             self.prepareCapture() 
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()
@@ -158,13 +157,14 @@ class Camera:
         picture.save(byte_data, format='jpeg')
         self._pictures.append(byte_data)
         self.setActive()
+        logging.info('Anzahl der Bilder für Kameramodul:')
+        logging.info(self._pic_dims.totalNumPictures)
 
         if self._is_keep_pictures:
             self._comm.send(Workers.WORKER,
                             StateMachine.CameraEvent('capture', byte_data))
 
         if state.num_picture < self._pic_dims.totalNumPictures:
-            logging.info(self._pic_dims.totalNumPictures)
             self._comm.send(Workers.MASTER,
                             StateMachine.CameraEvent('countdown'))
         else:

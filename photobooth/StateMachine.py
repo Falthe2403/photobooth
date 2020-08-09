@@ -469,9 +469,10 @@ class PostprocessState(State):
         #if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
         #  event.name == 'idle'):
         
-        # Again Taster um zum Idle Modus zurück zu kehren 
+        # Again Taster und Trigger-Taster um zum Idle Modus zurück zu kehren 
         if ((isinstance(event, GuiEvent) and event.name == 'idle') or 
-        (isinstance(event, GpioEvent) and event.name == 'againpic')):
+        (isinstance(event, GpioEvent) and event.name == 'againpic') or
+        (isinstance(event, GpioEvent) and event.name == 'trigger')):
             context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))

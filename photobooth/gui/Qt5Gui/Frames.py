@@ -372,11 +372,13 @@ class PostprocessMessage(Widgets.TransparentOverlay):
         
         buttons = [createButton(task) for task in tasks]
         buttons.append(QtWidgets.QPushButton(_('Gfollt ma')))
-        buttons[-1].clicked.connect(idle_handle)
+        buttons.append(QtWidgets.QPushButton(_('Nochmal')))
+        buttons[-1].clicked.connect(idle_handle)        # Bei Click auf den Button kehre zu Idle zurück
+        buttons[-2].clicked.connect(idle_handle)        # Bei Click auf den Button kehre zu Idle zurück
 
         button_lay = QtWidgets.QGridLayout()
         for i, button in enumerate(buttons):
-            pos = divmod(i, 2)
+            pos = divmod(i, 3)
             button_lay.addWidget(button, *pos)
 
         layout = QtWidgets.QVBoxLayout()

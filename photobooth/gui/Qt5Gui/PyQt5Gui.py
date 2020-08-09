@@ -176,7 +176,7 @@ class PyQt5Gui(GuiSkeleton):
 
         self._enableEscape()
         self._disableTrigger()
-        self._cfg.read()
+        self._cfg.read()    # lese die aktuellen PictureDimensions aus dem Photobooth.cfg file
         num_pic = (self._cfg.getInt('Picture', 'num_x'),
                    self._cfg.getInt('Picture', 'num_y'))
         skip = [i for i in self._cfg.getIntList('Picture', 'skip')
@@ -207,8 +207,10 @@ class PyQt5Gui(GuiSkeleton):
         
         num_pic = (self._cfg.getInt('Picture', 'num_x'),
                    self._cfg.getInt('Picture', 'num_y'))
-        logging.info(self._cfg.getInt('Picture', 'num_x'))
-        logging.info(self._cfg.getInt('Picture', 'num_y'))
+        # logging.info('Show capture - Anzahl num_x') 
+        # logging.info(self._cfg.getInt('Picture', 'num_x'))
+        # logging.info('Show capture - Anzahl num_y') 
+        # logging.info(self._cfg.getInt('Picture', 'num_y'))
         skip = [i for i in self._cfg.getIntList('Picture', 'skip')
                 if 1 <= i and i <= num_pic[0] * num_pic[1]]
         self._setWidget(Frames.CaptureMessage(state.num_picture, *num_pic,

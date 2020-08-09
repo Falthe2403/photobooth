@@ -169,7 +169,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','1')
         self._cfg.set('Picture','num_y','1')
         self._cfg.write()
-        logging.info('Schreibe 1 Bild')
+        logging.info('Taste gedrückt - Schreibe 1 Bild ins Photobooth.cfg')
         if self._is_printp:
             self.disableTrigger()
             self.disablePrintp()
@@ -181,7 +181,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','1')
         self._cfg.set('Picture','num_y','2')
         self._cfg.write()
-        logging.info('Schreibe 2 Bilder')
+        logging.info('Taste gedrückt - Schreibe 2 Bilder ins Photobooth.cfg')
         if self._is_trigger:
             self.disableTrigger()
             self.disablePrintp()
@@ -193,7 +193,7 @@ class Gpio:
         self._cfg.set('Picture','num_x','2')
         self._cfg.set('Picture','num_y','2')
         self._cfg.write()
-        logging.info('Schreibe 4 Bilder')
+        logging.info('Taste gedrückt - Schreibe 4 Bilder ins Photobooth.cfg')
         if self._is_againpic:
             self.disableTrigger()
             self.disablePrintp()
@@ -230,26 +230,39 @@ class Gpio:
 
     def showCountdown(self):
 
+        self.disableTrigger()
+        self.disablePrintp()
+        self.disableAgainpic()
         sleep(0.2)
         self.rgbBlink()
 
     def showCapture(self):
 
+        self.disableTrigger()
+        self.disablePrintp()
+        self.disableAgainpic()
         self.rgbOn()
         self.setRgbColor(1, 1, .9)
 
     def showAssemble(self):
 
+        self.disableTrigger()
+        self.disablePrintp()
+        self.disableAgainpic()
         self.rgbOff()
 
     def showReview(self):
 
+        self.disableTrigger()
+        self.disablePrintp()
+        self.disableAgainpic()
         self.setRgbColor(0, .15, 0)
 
     def showPostprocess(self):
         
         self.enableAgainpic()   # Taster aktivieren für "nochmal"
-        self.disablePrintp()
+        self.enableTrigger()    # Taster aktivieren für "nochmal"
+        self.enablePrintp()     # Taster aktivieren für "drucken"
         
         pass
 
