@@ -38,6 +38,10 @@ class PictureDimensions:
         self._num_pictures = (num_x,
                               num_y)
 
+        self._skip = []
+
+        self._skip_last = False
+
         self._capture_size = capture_size
 
         self._output_size = (size_x,
