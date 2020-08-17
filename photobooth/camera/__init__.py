@@ -69,8 +69,8 @@ class Camera:
         if self._rotation is not None:
             test_picture = test_picture.transpose(self._rotation)
 
-        self._pic_dims = PictureDimensions('1',
-                '1',
+        self._pic_dims = PictureDimensions(1,
+                1,
                 self._cfg.getInt('Picture', 'size_x'),
                 self._cfg.getInt('Picture', 'size_y'),
                 self._cfg.getInt('Picture', 'inner_dist_x'),
