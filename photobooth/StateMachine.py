@@ -18,8 +18,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import printer
-from util import lookup_and_import
+from . import printer
+from .util import lookup_and_import
 
 class Context:
 
@@ -40,7 +40,7 @@ class Context:
             print_paper_size = (config.getInt('Printer', 'width'),
                           config.getInt('Printer', 'height'))
             Printer = lookup_and_import(printer.modules, print_module, 'printer')
-            self._printer = Printer(print_module, print_paper_size, False)
+            self._printer = Printer(print_paper_size, False)
 
 
 
