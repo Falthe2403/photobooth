@@ -482,18 +482,19 @@ class PostprocessState(State):
     def handleEvent(self, event, context):
 
         if (isinstance(event, GpioEvent) and event.name == 'left_button'):
-            context.state = PrintState(self._picture)
+            if context._printer is not None:
+                logging.debug("Printing picture...")
+                context._printer.print(self._picture)
+            context.state = PrintState()
         elif(isinstance(event, GpioEvent) and event.name == 'right_button'):
             context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))
 
 class PrintState(State):
-    def __init__(self, picture):
+
+    def __init__(self):
         super().__init__()
-        self._picture = picture
 
     def handleEvent(self, event, context):
-        if context._printer is not None:
-            context._printer.print(self._picture)
         context.state = IdleState()
