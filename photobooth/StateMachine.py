@@ -481,5 +481,4 @@ class PrintState(State):
         super().__init__()
 
     def handleEvent(self, event, context):
-        time.sleep(3.0)
         context.state = IdleState()

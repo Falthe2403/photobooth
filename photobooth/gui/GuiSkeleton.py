@@ -75,6 +75,10 @@ class GuiSkeleton:
 
         raise NotImplementedError()
 
+    def showPrint(self):
+
+        raise NotImplementedError()
+
     def handleState(self, state):
 
         if isinstance(state, StateMachine.CameraEvent):
@@ -100,6 +104,6 @@ class GuiSkeleton:
         elif isinstance(state, StateMachine.PostprocessState):
             self.showPostprocess(state)
         elif isinstance(state, StateMachine.PrintState):
-            self.showAssemble(state)
+            self.showPrint()
         elif isinstance(state, StateMachine.TeardownState):
             self.teardown(state)

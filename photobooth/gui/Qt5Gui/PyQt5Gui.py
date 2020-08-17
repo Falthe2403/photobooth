@@ -267,6 +267,10 @@ class PyQt5Gui(GuiSkeleton):
             lambda: self._comm.send(Workers.MASTER,
                                     TeardownEvent(TeardownEvent.RESTART))))
 
+    def showPrint(self):
+
+        self._setWidget(Frames.WaitMessage(_('Printing picture...')))
+
 
 class PyQt5MainWindow(QtWidgets.QMainWindow):
 
