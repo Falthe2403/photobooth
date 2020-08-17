@@ -96,20 +96,17 @@ class Camera:
 
         return True
 
-    # Anzahl der Fotos für die Kamera holen
-    def holedimension(self):
-        
-        self._cfg.read()
-        test_picture = self._cap.getPicture()
-        self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
 
     def handleState(self, state):
 
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self.holedimension() # Kamera übernimmt im Greeter State die gesetzten PictureDimension von dem .cfg-File
-            self.prepareCapture() 
+            _cfg = self._cfg.read()
+            _cfg.set('Picture','num_x', state.num_x)
+            _cfg.set('Picture','num_y',state.num_y)
+            test_picture = self._cap.getPicture()
+            self.pic_dims = PictureDimensions(self._cfg, test_picture.size)
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()
         elif isinstance(state, StateMachine.CaptureState):

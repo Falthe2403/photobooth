@@ -59,9 +59,9 @@ class Gpio:
                          ')'),
                          custom_bottom_pin, custom_left_pin, custom_right_pin)     # neu
 
-            self._gpio.setButton(custom_bottom_pin, self.two_images)
-            self._gpio.setButton(custom_left_pin, self.one_image)        # neu
-            self._gpio.setButton(custom_right_pin, self.four_images)    # neu
+            self._gpio.setButton(custom_bottom_pin, self.handle_bottombutton)
+            self._gpio.setButton(custom_left_pin, self.handle_leftbutton)        # neu
+            self._gpio.setButton(custom_right_pin, self.handle_rightbutton)    # neu
         else:
             logging.info('GPIO disabled')
 
@@ -88,6 +88,8 @@ class Gpio:
             self.showReview()
         elif isinstance(state, StateMachine.PostprocessState):
             self.showPostprocess()
+        elif isinstance(state, StateMachine.PrintState):
+            self.showPrint()
 
     def enableBottomPin(self):
 
@@ -123,42 +125,26 @@ class Gpio:
 
 
     # neu --------------------------------------------------------------------------
-    # Zuordnung zwischen Taster und Bilderanzahl + Schreiben in das Photobooth.cfg file
-    def one_image(self):
-        
-        self._cfg.set('Picture','num_x','1')
-        self._cfg.set('Picture','num_y','1')
-        self._cfg.write()
-        logging.info('Taste gedrückt - Schreibe 1 Bild ins Photobooth.cfg')
+    def handle_leftbutton(self):
         if self._is_leftpin:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('one_image'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('left_button'))
     
-    def two_images(self):
-
-        self._cfg.set('Picture','num_x','1')
-        self._cfg.set('Picture','num_y','2')
-        self._cfg.write()
-        logging.info('Taste gedrückt - Schreibe 2 Bilder ins Photobooth.cfg')
+    def handle_bottombutton(self):
         if self._is_bottompin:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('two_images'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('bottom_button'))
             
-    def four_images(self):
-        
-        self._cfg.set('Picture','num_x','2')
-        self._cfg.set('Picture','num_y','2')
-        self._cfg.write()
-        logging.info('Taste gedrückt - Schreibe 4 Bilder ins Photobooth.cfg')
+    def handle_rightbutton(self):
         if self._is_rightpin:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('four_images'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('right_button'))
     # neu  --------------------------------------------------------------------------
     def exit(self):
 
@@ -209,17 +195,10 @@ class Gpio:
         self.disableBottomPin()    # Taster aktivieren für "nochmal"
         self.enableLeftPin()     # Taster aktivieren für "drucken"
 
-        if self._is_leftpin:
-            self.disableBottomPin()
-            self.disableLeftPin()
-            self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('print'))
-        elif self._is_rightpin:
-            self.disableBottomPin()
-            self.disableLeftPin()
-            self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('idle'))
-        pass
+    def showPrint(self):
+        self.disableBottomPin()
+        self.disableLeftPin()
+        self.disableRightPin()
 
 
 class Entities:
