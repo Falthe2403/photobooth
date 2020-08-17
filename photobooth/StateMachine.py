@@ -500,4 +500,7 @@ class PrintState(State):
         super().__init__()
 
     def handleEvent(self, event, context):
-        context.state = IdleState()
+        if (isinstance(event, GuiEvent) and event.name == 'done'):
+            context.state = IdleState()
+        else:
+            raise TypeError('Unknown Event type "{}"'.format(event))

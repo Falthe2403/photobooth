@@ -268,8 +268,11 @@ class PyQt5Gui(GuiSkeleton):
                                     TeardownEvent(TeardownEvent.RESTART))))
 
     def showPrint(self):
-
-        self._setWidget(Frames.WaitMessage(_('Printing picture...')))
+        countdown_time = "5"
+        self._setWidget(Frames.CountdownMessage(
+            countdown_time,
+            lambda: self._comm.send(Workers.MASTER, GuiEvent('done'))))
+        # self._setWidget(Frames.WaitMessage(_('Printing picture...')))
 
 
 class PyQt5MainWindow(QtWidgets.QMainWindow):
