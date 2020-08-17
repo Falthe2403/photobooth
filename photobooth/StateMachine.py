@@ -497,6 +497,8 @@ class PostprocessState(State):
             context.state = PrintState()
         elif(isinstance(event, GpioEvent) and event.name == 'right_button'):
             context.state = IdleState()
+        elif(isinstance(event, GuiEvent) and event.name == 'idle'):
+            context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))
 
