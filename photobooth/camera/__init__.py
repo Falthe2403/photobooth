@@ -69,17 +69,7 @@ class Camera:
         if self._rotation is not None:
             test_picture = test_picture.transpose(self._rotation)
 
-        self._pic_dims = PictureDimensions(1,
-                1,
-                self._cfg.getInt('Picture', 'size_x'),
-                self._cfg.getInt('Picture', 'size_y'),
-                self._cfg.getInt('Picture', 'inner_dist_x'),
-                self._cfg.getInt('Picture', 'inner_dist_y'),
-                self._cfg.getInt('Picture', 'outer_dist_x'),
-                self._cfg.getInt('Picture', 'outer_dist_y'),
-                self._cfg.getInt('Gui', 'width'),
-                self._cfg.getInt('Gui', 'height'),
-                test_picture.size)
+        self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
         self._is_preview = self._is_preview and self._cap.hasPreview
 
         background = self._cfg.get('Picture', 'background')
@@ -112,20 +102,9 @@ class Camera:
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            logging.debug('Setting dimensions: {}, {}'.format(state.num_x, state.num_y))
+            self._cfg.read()
             test_picture = self._cap.getPicture()
-            self.pic_dims = PictureDimensions(
-                state.num_x,
-                state.num_y,
-                self._cfg.getInt('Picture', 'size_x'),
-                self._cfg.getInt('Picture', 'size_y'),
-                self._cfg.getInt('Picture', 'inner_dist_x'),
-                self._cfg.getInt('Picture', 'inner_dist_y'),
-                self._cfg.getInt('Picture', 'outer_dist_x'),
-                self._cfg.getInt('Picture', 'outer_dist_y'),
-                self._cfg.getInt('Gui', 'width'),
-                self._cfg.getInt('Gui', 'height'),
-                test_picture.size)
+            self.pic_dims = PictureDimensions(self._cfg, test_picture.size)
             self.prepareCapture()
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()

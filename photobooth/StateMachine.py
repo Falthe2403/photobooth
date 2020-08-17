@@ -367,22 +367,28 @@ class IdleState(State):
 
         # Gpio Event in abhängigkeit der einzelnen Taster (1, 2 bzw. 4 Bilder)
         if isinstance(event, GpioEvent) and event.name == 'left_button':
-            context.state = GreeterState('1', '1')
+            context._cfg.set('Picture', 'num_x', '1')
+            context._cfg.set('Picture', 'num_y', '1')
+            context._cfg.write()
+            context.state = GreeterState()
         elif isinstance(event, GpioEvent) and event.name == 'bottom_button':
-            context.state = GreeterState('1', '2')
+            context._cfg.set('Picture', 'num_x', '1')
+            context._cfg.set('Picture', 'num_y', '2')
+            context._cfg.write()
+            context.state = GreeterState()
         elif isinstance(event, GpioEvent) and event.name == 'right_button':
-            context.state = GreeterState('2', '2')
+            context._cfg.set('Picture', 'num_x', '2')
+            context._cfg.set('Picture', 'num_y', '2')
+            context._cfg.write()
+            context.state = GreeterState()
         else:
              raise TypeError('Unknown Event type "{}"'.format(event))
 
 
 class GreeterState(State):
 
-    def __init__(self, _num_x, _num_y):
+    def __init__(self):
         super().__init__()
-
-        self.num_x = _num_x
-        self.num_y = _num_y
 
     def handleEvent(self, event, context):
 

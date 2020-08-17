@@ -22,39 +22,28 @@ import logging
 
 class PictureDimensions:
 
-    def __init__(self,
-                 num_x,
-                 num_y,
-                 size_x,
-                 size_y,
-                 inner_dist_x,
-                 inner_dist_y,
-                 outer_dist_x,
-                 outer_dist_y,
-                 gui_width,
-                 gui_height,
-                 capture_size):
+    def __init__(self, config, capture_size):
 
-        self._num_pictures = (num_x,
-                              num_y)
-
-        self._skip = []
-
-        self._skip_last = False
+        self._num_pictures = (config.getInt('Picture', 'num_x'),
+                              config.getInt('Picture', 'num_y'))
 
         self._capture_size = capture_size
 
-        self._output_size = (size_x,
-                             size_y)
+        self._output_size = (config.getInt('Picture', 'size_x'),
+                             config.getInt('Picture', 'size_y'))
 
-        self._inner_distance = (inner_dist_x,
-                                inner_dist_y)
-        self._outer_distance = (outer_dist_x,
-                                outer_dist_y)
+        self._inner_distance = (config.getInt('Picture', 'inner_dist_x'),
+                                config.getInt('Picture', 'inner_dist_y'))
+        self._outer_distance = (config.getInt('Picture', 'outer_dist_x'),
+                                config.getInt('Picture', 'outer_dist_y'))
+
+        self._skip = [i for i in config.getIntList('Picture', 'skip')
+                      if 1 <= i and
+                      i <= self._num_pictures[0] * self._num_pictures[1]]
 
         self.computeThumbnailDimensions()
 
-        self.computePreviewDimensions(gui_width, gui_height)
+        self.computePreviewDimensions(config)
 
     def _computeResizeFactor(self, coord, inner_size):
 
@@ -98,10 +87,10 @@ class PictureDimensions:
                                                  self.numPictures[0],
                                                  self.numPictures[1], thumbs))
 
-    def computePreviewDimensions(self, gui_width, gui_height):
+    def computePreviewDimensions(self, config):
 
-        gui_size = (gui_width,
-                    gui_height)
+        gui_size = (config.getInt('Gui', 'width'),
+                    config.getInt('Gui', 'height'))
 
         resize_factor = min(min((gui_size[i] / self.captureSize[i]
                                  for i in range(2))), 1)
