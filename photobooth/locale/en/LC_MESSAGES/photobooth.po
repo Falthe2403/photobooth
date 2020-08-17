@@ -247,6 +247,10 @@ msgstr "Starting the photobooth..."
 msgid "Processing picture..."
 msgstr "Processing picture..."
 
+#: photobooth/gui/Qt5Gui/PyQt5Gui.py:272
+msgid "Printing picture..."
+msgstr "Printing picture..."
+
 #: photobooth/gui/Qt5Gui/PyQt5Gui.py:286
 msgid "Confirmation"
 msgstr "Confirmation"

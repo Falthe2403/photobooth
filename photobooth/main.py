@@ -177,7 +177,7 @@ def run(argv, is_run):
     config = Config('photobooth.cfg')
 
     comm = Communicator()
-    context = Context(comm, is_run)
+    context = Context(comm, is_run, config)
 
     # Initialize processes: We use five processes here:
     # 1. Master that collects events and distributes state changes

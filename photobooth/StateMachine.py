@@ -18,12 +18,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import time
-
+import printer
+from util import lookup_and_import
 
 class Context:
 
-    def __init__(self, communicator, omit_welcome=False):
+    def __init__(self, communicator, omit_welcome=False, config=None):
 
         super().__init__()
         self._comm = communicator
@@ -32,6 +32,17 @@ class Context:
             self.state = StartupState()
         else:
             self.state = WelcomeState()
+        self._cfg = config
+        self._printer = None
+
+        if config.getBool('Printer', 'enable'):
+            print_module = config.get('Printer', 'module')
+            print_paper_size = (config.getInt('Printer', 'width'),
+                          config.getInt('Printer', 'height'))
+            Printer = lookup_and_import(printer.modules, print_module, 'printer')
+            self._printer = Printer(print_module, print_paper_size, False)
+
+
 
     @property
     def is_running(self):
@@ -456,29 +467,33 @@ class ReviewState(State):
     def handleEvent(self, event, context):
 
         if isinstance(event, GuiEvent) and event.name == 'postprocess':
-            context.state = PostprocessState()
+            context.state = PostprocessState(self._picture)
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))
 
 
 class PostprocessState(State):
 
-    def __init__(self):
+    def __init__(self, picture):
 
         super().__init__()
+        self._picture = picture
 
     def handleEvent(self, event, context):
 
         if (isinstance(event, GpioEvent) and event.name == 'left_button'):
-            context.state = PrintState()
+            context.state = PrintState(self._picture)
         elif(isinstance(event, GpioEvent) and event.name == 'right_button'):
             context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))
 
 class PrintState(State):
-    def __init__(self):
+    def __init__(self, picture):
         super().__init__()
+        self._picture = picture
 
     def handleEvent(self, event, context):
+        if context._printer is not None:
+            context._printer.print(self._picture)
         context.state = IdleState()

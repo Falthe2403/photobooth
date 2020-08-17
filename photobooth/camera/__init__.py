@@ -58,6 +58,10 @@ class Camera:
                     270: Image.ROTATE_270}
         self._rotation = rot_vals[self._cfg.getInt('Camera', 'rotation')]
 
+        self.print_module = config.get('Printer', 'module')
+        self.print_paper_size = (config.getInt('Printer', 'width'),
+                        config.getInt('Printer', 'height'))
+
     def startup(self):
 
         self._cap = self._cam()
@@ -117,6 +121,8 @@ class Camera:
             self.assemblePicture()
         elif isinstance(state, StateMachine.TeardownState):
             self.teardown(state)
+        elif isinstance(state, StateMachine.PrintState):
+            self._printer.print(picture)
 
     def setActive(self):
 
