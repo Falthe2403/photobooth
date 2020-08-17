@@ -102,7 +102,6 @@ class Camera:
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self._cfg.read()
             logging.debug('Setting dimensions: {}, {}'.format(state.num_x, state.num_y))
             self._cfg.set('Picture','num_x', state.num_x)
             self._cfg.set('Picture','num_y', state.num_y)
