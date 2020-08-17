@@ -20,6 +20,7 @@
 import logging
 from . import printer
 from .util import lookup_and_import
+from PIL import Image, ImageQt
 
 class Context:
 
@@ -484,7 +485,9 @@ class PostprocessState(State):
         if (isinstance(event, GpioEvent) and event.name == 'left_button'):
             if context._printer is not None:
                 logging.debug("Printing picture...")
-                context._printer.print(self._picture)
+                image = Image.open(self._picture)
+                image_qt = ImageQt.ImageQt(image)
+                context._printer.print(image_qt)
             context.state = PrintState()
         elif(isinstance(event, GpioEvent) and event.name == 'right_button'):
             context.state = IdleState()
