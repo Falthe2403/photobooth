@@ -104,7 +104,7 @@ class Camera:
         elif isinstance(state, StateMachine.GreeterState):
             self._cfg.read()
             test_picture = self._cap.getPicture()
-            self.pic_dims = PictureDimensions(self._cfg, test_picture.size)
+            self._pic_dims = PictureDimensions(self._cfg, test_picture.size)
             self.prepareCapture()
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()
