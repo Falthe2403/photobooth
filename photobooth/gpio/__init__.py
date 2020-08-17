@@ -134,7 +134,7 @@ class Gpio:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('printp'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('one_image'))
     
     def two_images(self):
 
@@ -146,7 +146,7 @@ class Gpio:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('trigger'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('two_images'))
             
     def four_images(self):
         
@@ -158,7 +158,7 @@ class Gpio:
             self.disableBottomPin()
             self.disableLeftPin()
             self.disableRightPin()
-            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('againpic'))
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('four_images'))
     # neu  --------------------------------------------------------------------------
     def exit(self):
 

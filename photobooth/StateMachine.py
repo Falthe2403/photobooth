@@ -354,11 +354,11 @@ class IdleState(State):
 
         # Gpio Event in abhängigkeit der einzelnen Taster (1, 2 bzw. 4 Bilder)
         if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-           event.name == 'trigger'):context.state = GreeterState()
+           event.name == 'one_image'):context.state = GreeterState()
         elif ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-           event.name == 'printp'): context.state = GreeterState()
+           event.name == 'two_images'): context.state = GreeterState()
         elif ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-           event.name == 'againpic'): context.state = GreeterState()
+           event.name == 'four_images'): context.state = GreeterState()
         else:
              raise TypeError('Unknown Event type "{}"'.format(event))
 

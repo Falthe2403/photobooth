@@ -815,21 +815,21 @@ class Settings(QtWidgets.QFrame):
         exit_pin.setValue(self._cfg.getInt('Gpio', 'exit_pin'))
         self.add('Gpio', 'exit_pin', exit_pin)
 
-        trig_pin = QtWidgets.QSpinBox()
-        trig_pin.setRange(1, 40)
-        trig_pin.setValue(self._cfg.getInt('Gpio', 'trigger_pin'))
-        self.add('Gpio', 'trigger_pin', trig_pin)
+        custom_bottom_pin = QtWidgets.QSpinBox()
+        custom_bottom_pin.setRange(1, 40)
+        custom_bottom_pin.setValue(self._cfg.getInt('Gpio', 'trigger_pin'))
+        self.add('Gpio', 'custom_bottom_pin', custom_bottom_pin)
         
         #neu ---------------------------------------------------------
-        printp_pin = QtWidgets.QSpinBox()
-        printp_pin.setRange(1, 40)
-        printp_pin.setValue(self._cfg.getInt('Gpio', 'printp_pin'))
-        self.add('Gpio', 'printp_pin', printp_pin)
+        custom_left_pin = QtWidgets.QSpinBox()
+        custom_left_pin.setRange(1, 40)
+        custom_left_pin.setValue(self._cfg.getInt('Gpio', 'printp_pin'))
+        self.add('Gpio', 'custom_left_pin', custom_left_pin)
 
-        againpic_pin = QtWidgets.QSpinBox()
-        againpic_pin.setRange(1, 40)
-        againpic_pin.setValue(self._cfg.getInt('Gpio', 'againpic_pin'))
-        self.add('Gpio', 'againpic_pin', againpic_pin)
+        custom_right_pin = QtWidgets.QSpinBox()
+        custom_right_pin.setRange(1, 40)
+        custom_right_pin.setValue(self._cfg.getInt('Gpio', 'againpic_pin'))
+        self.add('Gpio', 'custom_right_pin', custom_right_pin)
         #neu ---------------------------------------------------------
         
         lamp_pin = QtWidgets.QSpinBox()
@@ -860,9 +860,9 @@ class Settings(QtWidgets.QFrame):
         layout = QtWidgets.QFormLayout()
         layout.addRow(_('Enable GPIO:'), enable)
         layout.addRow(_('Exit button pin (BCM numbering):'), exit_pin)
-        layout.addRow(_('Trigger button pin (BCM numbering):'), trig_pin)
-        layout.addRow(_('Print button pin (BCM numbering):'), printp_pin)
-        layout.addRow(_('Again button pin (BCM numbering):'), againpic_pin)
+        layout.addRow(_('Trigger button pin (BCM numbering):'), custom_bottom_pin)
+        layout.addRow(_('Print button pin (BCM numbering):'), custom_left_pin)
+        layout.addRow(_('Again button pin (BCM numbering):'), custom_right_pin)
         layout.addRow(_('Idle lamp pin (BCM numbering):'), lamp_pin)
         layout.addRow(_('RGB LED pins (BCM numbering):'), lay_rgb)
 
@@ -1075,12 +1075,12 @@ class Settings(QtWidgets.QFrame):
                       str(self.get('Gpio', 'enable').isChecked()))
         self._cfg.set('Gpio', 'exit_pin', self.get('Gpio', 'exit_pin').text())
         self._cfg.set('Gpio', 'trigger_pin',
-                      self.get('Gpio', 'trigger_pin').text())
+                      self.get('Gpio', 'custom_bottom_pin').text())
         #neu -------------------------
         self._cfg.set('Gpio', 'printp_pin',
-                      self.get('Gpio', 'printp_pin').text())
+                      self.get('Gpio', 'custom_left_pin').text())
         self._cfg.set('Gpio', 'againpic_pin',
-                      self.get('Gpio', 'againpic_pin').text())
+                      self.get('Gpio', 'custom_right_pin').text())
         #neu -------------------------              
         self._cfg.set('Gpio', 'lamp_pin', self.get('Gpio', 'lamp_pin').text())
         self._cfg.set('Gpio', 'chan_r_pin',
