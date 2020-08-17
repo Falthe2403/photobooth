@@ -102,13 +102,13 @@ class Camera:
         if isinstance(state, StateMachine.StartupState):
             self.startup()
         elif isinstance(state, StateMachine.GreeterState):
-            self.prepareCapture()
             self._cfg.read()
             self._cfg.set('Picture','num_x', state.num_x)
-            self._cfg.set('Picture','num_y',state.num_y)
+            self._cfg.set('Picture','num_y', state.num_y)
             self._cfg.write()
             test_picture = self._cap.getPicture()
             self.pic_dims = PictureDimensions(self._cfg, test_picture.size)
+            self.prepareCapture()
         elif isinstance(state, StateMachine.CountdownState):
             self.capturePreview()
         elif isinstance(state, StateMachine.CaptureState):
