@@ -18,6 +18,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import time
 
 
 class Context:
@@ -466,13 +467,17 @@ class PostprocessState(State):
 
     def handleEvent(self, event, context):
 
-        #if ((isinstance(event, GuiEvent) or isinstance(event, GpioEvent)) and
-        #  event.name == 'idle'):
-        
-        # Again Taster und Trigger-Taster um zum Idle Modus zurück zu kehren 
-        if ((isinstance(event, GuiEvent) and event.name == 'idle') or 
-        (isinstance(event, GpioEvent) and event.name == 'againpic') or
-        (isinstance(event, GpioEvent) and event.name == 'trigger')):
+        if (isinstance(event, GpioEvent) and event.name == 'print'):
+            context.state = PrintState()
+        elif(isinstance(event, GpioEvent) and event.name == 'idle'):
             context.state = IdleState()
         else:
             raise TypeError('Unknown Event type "{}"'.format(event))
+
+class PrintState(State):
+    def __init__(self):
+        super().__init__()
+
+    def handleEvent(self, event, context):
+        time.sleep(3.0)
+        context.state = IdleState()

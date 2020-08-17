@@ -206,9 +206,19 @@ class Gpio:
     def showPostprocess(self):
         
         self.enableRightPin()   # Taster aktivieren für "nochmal"
-        self.enableBottomPin()    # Taster aktivieren für "nochmal"
+        self.disableBottomPin()    # Taster aktivieren für "nochmal"
         self.enableLeftPin()     # Taster aktivieren für "drucken"
-        
+
+        if self._is_leftpin:
+            self.disableBottomPin()
+            self.disableLeftPin()
+            self.disableRightPin()
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('print'))
+        elif self._is_rightpin:
+            self.disableBottomPin()
+            self.disableLeftPin()
+            self.disableRightPin()
+            self._comm.send(Workers.MASTER, StateMachine.GpioEvent('idle'))
         pass
 
 

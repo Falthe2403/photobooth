@@ -85,9 +85,9 @@ class IdleMessage(QtWidgets.QFrame):
         self.setObjectName('IdleMessage')
 
         self._text_title = _('Wiaviel Bilder wollts')
-        self._printbutton = _('1 Bild')
-        self._againpicbutton = _('4 Bilder')
-        self._triggerbild = _('2 Bilder')
+        self._oneimagebutton = _('1 Bild')
+        self._twoimagesbutton = _('4 Bilder')
+        self._threeimagesbutton = _('2 Bilder')
         
         #self._message_button = _('Button!')
 
@@ -97,11 +97,11 @@ class IdleMessage(QtWidgets.QFrame):
 
         lbl = QtWidgets.QLabel(self._text_title)
         lbl.setObjectName('title')
-        lbl2 = QtWidgets.QLabel(self._printbutton)
+        lbl2 = QtWidgets.QLabel(self._oneimagebutton)
         lbl2.setObjectName('links')
-        lbl3 = QtWidgets.QLabel(self._againpicbutton)
+        lbl3 = QtWidgets.QLabel(self._twoimagesbutton)
         lbl3.setObjectName('rechts')
-        lbl4 = QtWidgets.QLabel(self._triggerbild)
+        lbl4 = QtWidgets.QLabel(self._threeimagesbutton)
         #btn = QtWidgets.QPushButton(self._message_button)
         #btn.clicked.connect(trigger_action)
 
